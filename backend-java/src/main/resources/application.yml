@@ -1,0 +1,90 @@
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: ${SESSION_COOKIE_SAME_SITE:lax}
+        secure: ${SESSION_COOKIE_SECURE:false}
+  # Render injects PORT. Render Blueprints may also set SERVER_PORT.
+  # If neither is set, default to 8080 for local dev.
+  port: ${PORT:${SERVER_PORT:8080}}
+
+spring:
+  application:
+    name: pranacrux-backend
+
+  # Load the project .env (repo root) if present so local `mvn spring-boot:run`
+  # works without exporting anything. Optional: missing file is ignored, and
+  # real environment variables / Render dashboard values always win.
+  config:
+    import: "optional:file:.env[.properties],optional:file:../.env[.properties]"
+
+  datasource:
+    # Local dev defaults point at localhost. Override via env vars
+    # (MYSQL_URL, or MYSQL_HOST/PORT/DATABASE/USER/PASSWORD + MYSQL_SSL_MODE)
+    # on any other machine. Aiven requires TLS -> set MYSQL_SSL_MODE=REQUIRED.
+    url: ${MYSQL_URL:jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:pranacrux}?sslMode=${MYSQL_SSL_MODE:DISABLED}&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      initialization-fail-timeout: 180000
+      connection-timeout: 30000
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      # update: Hibernate auto-creates/updates tables from entities.
+      # Safe for adding new tables/columns. Won't drop or rename anything.
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    # DISABLED: Render's flyway_schema_history carries stale FAILED V1 rows from
+    # earlier half-completed deploys. Flyway 10 cannot repair them declaratively
+    # (`ignore-migration-patterns: "*:failed"` is REJECTED on boot:
+    #   Invalid migration state 'failed'. Valid states are: [*, missing, pending,
+    #   ignored, future]
+    # and baseline-on-migrate does NOT skip a FAILED row -> every boot hard-fails).
+    # The Render DB schema (and any fresh DB) works fine WITHOUT Flyway because
+    # Hibernate's ddl-auto: update builds all other tables/columns; the only thing
+    # it can never do is DROP columns. That single leftover dead column
+    # (`users.preferred_language` NOT NULL, no default) is dropped at boot by
+    # SchemaRepairRunner (idempotent, information_schema-guarded, never throws),
+    # so registration's INSERT no longer 500s. This removes Flyway as a boot
+    # dependency entirely - no schema-history state to go stale again.
+    enabled: false
+    locations: classpath:db/migration
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+pranacrux:
+  demo:
+    seed:
+      enabled: ${DEMO_SEED_ENABLED:false}
+  super-admin:
+    email: ${SUPER_ADMIN_EMAIL:}
+    password: ${SUPER_ADMIN_PASSWORD:}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000}
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+  email:
+    from: ${EMAIL_FROM:PranaCrux Identity <noreply@example.com>}
+    brevo-api-key: ${BREVO_API_KEY:}
+
+logging:
+  level:
+    com.pranacrux: INFO

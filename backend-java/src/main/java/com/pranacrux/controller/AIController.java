@@ -1,0 +1,57 @@
+package com.pranacrux.controller;
+
+import com.pranacrux.common.ApiResponse;
+import com.pranacrux.dto.ai.AIRequests.*;
+import com.pranacrux.service.AIService;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/ai")
+public class AIController {
+
+    private final AIService aiService;
+
+    public AIController(AIService aiService) {
+        this.aiService = aiService;
+    }
+
+    @PostMapping("/patient-assistant")
+    public ApiResponse patientAssistant(@RequestBody PatientAssistantRequest req) {
+        return aiService.patientAssistant(req);
+    }
+
+    @PostMapping("/doctor-assistant")
+    public ApiResponse doctorAssistant(@RequestBody DoctorAssistantRequest req) {
+        return aiService.doctorAssistant(req);
+    }
+
+    @PostMapping("/prescribe-check")
+    public ApiResponse prescribeCheck(@RequestBody PrescribeCheckRequest req) {
+        return aiService.prescribeCheck(req);
+    }
+
+    @PostMapping("/explain-lab-report")
+    public ApiResponse explainLabReport(@RequestBody ExplainLabReportRequest req) {
+        return aiService.explainLabReport(req);
+    }
+
+    @PostMapping("/analyze-lab-attachment")
+    public ApiResponse analyzeLabAttachment(@RequestBody AnalyzeLabAttachmentRequest req) {
+        return aiService.analyzeLabAttachment(req);
+    }
+
+    @PostMapping("/validate-extract-lab")
+    public ApiResponse validateExtractLab(@RequestBody ValidateExtractLabRequest req) {
+        return aiService.validateAndExtractLabReport(req);
+    }
+
+    @PostMapping("/generate-diet-plan")
+    public ApiResponse generateDietPlan(@RequestBody GenerateDietPlanRequest req) {
+        return aiService.generateDietPlan(req);
+    }
+
+    @PostMapping("/care-analysis")
+    public ApiResponse careAnalysis(@RequestBody com.pranacrux.dto.ai.AIRequests.CareAnalysisRequest req) {
+        return aiService.careAnalysis(req);
+    }
+}

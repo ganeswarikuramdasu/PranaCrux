@@ -1,0 +1,68 @@
+# ======================================================
+# render.yaml
+# Render Blueprint for the PranaCrux Spring Boot backend.
+#
+# Deploy: Render -> New -> Blueprint -> this repo, or
+# manually: Render -> New -> Web Service -> this repo,
+# pick the Dockerfile, then set the env vars below.
+#
+# Values that are `sync: false` are filled in the Render
+# dashboard at provision time (secrets / Aiven specifics).
+# ======================================================
+
+services:
+  - type: web
+    name: pranacrux-backend
+    runtime: docker
+    repo: https://github.com/ganeswarikuramdasu/PranaCrux.git
+    plan: free
+    region: singapore
+    healthCheckPath: /api/health
+    envVars:
+      - key: SERVER_PORT
+        value: 8080
+
+      # --- MySQL (Aiven free) ---
+      # Fill MYSQL_HOST / MYSQL_PORT / MYSQL_PASSWORD from:
+      #   Aiven console -> your MySQL service -> Overview -> Connection information
+      # Aiven assigns a CUSTOM port (NOT 3306). The database 'defaultdb'
+      # always exists; use your custom DB name if you created one.
+      - key: MYSQL_SSL_MODE
+        value: REQUIRED
+      - key: MYSQL_HOST
+        sync: false
+      - key: MYSQL_PORT
+        sync: false
+      - key: MYSQL_DATABASE
+        value: defaultdb
+      - key: MYSQL_USER
+        value: avnadmin
+      - key: MYSQL_PASSWORD
+        sync: false
+
+      # --- Super admin ---
+      - key: SUPER_ADMIN_EMAIL
+        sync: false
+      - key: SUPER_ADMIN_PASSWORD
+        sync: false
+
+      # --- CORS: Vercel frontend + localhost dev ---
+      - key: CORS_ORIGINS
+        value: "https://pranacrux-eight.vercel.app,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000"
+
+      # --- Public URL ---
+      - key: APP_URL
+        value: https://pranacrux-backend.onrender.com
+
+      # --- AI (optional) ---
+      - key: GEMINI_API_KEY
+        sync: false
+
+      # --- Email / OTP via Brevo REST API (no SMTP) ---
+      # Get a free key: https://app.brevo.com/settings/keys/api
+      # EMAIL_FROM must be a sender VERIFIED in the Brevo account, otherwise
+      # Brevo accepts the API call but never delivers the email.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: "PranaCrux Identity <noreply@example.com>"
