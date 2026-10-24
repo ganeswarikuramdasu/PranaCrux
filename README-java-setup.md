@@ -15,12 +15,14 @@ Copy `.env.example` to `.env` in the project root and set your MySQL connection 
 Set `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_SSL_MODE` for your database. Hibernate creates the current application tables. No database reset is required.
 
 For local demos, one-tap sign-in is shown only for accounts configured with
-`VITE_DEMO_PATIENT_*`, `VITE_DEMO_DOCTOR_*`, or `VITE_DEMO_HOSPITAL_*` values.
+`VITE_DEMO_PATIENT_*`, `VITE_DEMO_DOCTOR_*`, `VITE_DEMO_HOSPITAL_*`, or
+`VITE_DEMO_ADMIN_*` values.
 These Vite values are visible to the local browser and must only contain
 disposable demo credentials. Optionally set `DEMO_SEED_ENABLED=true` and the
-matching `DEMO_*_EMAIL`/`DEMO_*_PASSWORD` backend values to reset passwords on
-already-provisioned users of the matching role. The seeder never creates
-accounts. Do not configure these values for production.
+matching `DEMO_*_EMAIL`/`DEMO_*_PASSWORD` backend values to create or refresh the local
+synthetic patient, doctor, and hospital accounts. Configure
+`SUPER_ADMIN_EMAIL`/`SUPER_ADMIN_PASSWORD` for the super-admin demo login.
+Do not configure demo values for production.
 
 ## Backend
 

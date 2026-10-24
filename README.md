@@ -187,9 +187,11 @@ both are configured. Never commit `.env`.
 Local quick-demo buttons are disabled unless demo credentials are configured
 through `VITE_DEMO_*` environment variables. Those values are exposed to the
 local browser, so use only disposable demo accounts and never configure them
-for a production build. The optional backend demo seeder only resets passwords
-for matching, already-provisioned accounts when `DEMO_SEED_ENABLED=true`; it
-does not create accounts.
+for a production build. The optional backend demo seeder creates or refreshes
+synthetic patient, doctor, and hospital accounts when `DEMO_SEED_ENABLED=true`.
+Configure the super-admin demo credentials separately using
+`SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD`. Do not enable demo accounts in
+production.
 
 ---
 

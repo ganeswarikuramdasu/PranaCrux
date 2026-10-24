@@ -121,6 +121,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         { role: "PATIENT" as const, email: import.meta.env.VITE_DEMO_PATIENT_EMAIL ?? "", password: import.meta.env.VITE_DEMO_PATIENT_PASSWORD ?? "", label: "Patient", symbol: "P" },
         { role: "DOCTOR" as const, email: import.meta.env.VITE_DEMO_DOCTOR_EMAIL ?? "", password: import.meta.env.VITE_DEMO_DOCTOR_PASSWORD ?? "", label: "Doctor", symbol: "D" },
         { role: "HOSPITAL_ADMIN" as const, email: import.meta.env.VITE_DEMO_HOSPITAL_EMAIL ?? "", password: import.meta.env.VITE_DEMO_HOSPITAL_PASSWORD ?? "", label: "Hospital", symbol: "H" },
+        { role: "SUPER_ADMIN" as const, email: import.meta.env.VITE_DEMO_ADMIN_EMAIL ?? "", password: import.meta.env.VITE_DEMO_ADMIN_PASSWORD ?? "", label: "Admin", symbol: "A" },
       ].filter((account) => account.email && account.password)
     : [];
 
@@ -464,6 +465,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                         const Icon =
                           item.role === "PATIENT" ? User :
                           item.role === "DOCTOR" ? Stethoscope : Building2;
+                        const DemoIcon = item.role === "SUPER_ADMIN" ? ShieldCheck : Icon;
                         return (
                           <button
                             key={item.role}
@@ -473,7 +475,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                             className="flex flex-col items-center justify-center gap-1.5 py-3 rounded-lg text-white font-semibold transition hover:brightness-105 active:scale-95"
                             style={{ backgroundColor: C.neon, boxShadow: `0 6px 16px ${C.neon}44` }}
                           >
-                            <Icon className="w-4.5 h-4.5" style={{ color: "#06130B" }} />
+                            <DemoIcon className="w-4.5 h-4.5" style={{ color: "#06130B" }} />
                             <span className="text-[13px] leading-none">{item.symbol}</span>
                           </button>
                         );
